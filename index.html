@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JFDV Labs — Software Studio</title>
+  <meta name="description" content="JFDV Labs builds simple, powerful apps for Windows and Android. Made in Italy.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0c10;
+      --bg2: #0f1219;
+      --bg3: #141820;
+      --line: rgba(255,255,255,0.06);
+      --accent: #2a5cff;
+      --accent2: #4f8ef7;
+      --text: #e8ecf4;
+      --muted: #6b7a99;
+      --dim: #3a4460;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID LINES ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(10,12,16,0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent2); }
+
+    nav ul {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    nav a {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 48px 80px;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 12vw, 160px);
+      line-height: 0.9;
+      letter-spacing: 2px;
+      color: var(--text);
+      max-width: 900px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+
+    .hero h1 .slash {
+      color: var(--accent);
+      display: inline-block;
+      transform: skewX(-8deg);
+    }
+
+    .hero-sub {
+      margin-top: 32px;
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 440px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 48px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+
+    .btn {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border: 1px solid;
+      text-decoration: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--dim);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* Big diagonal accent number */
+    .hero-num {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(200px, 30vw, 380px);
+      color: rgba(42,92,255,0.04);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -10px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 0 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── APPS SECTION ── */
+    .section {
+      position: relative;
+      z-index: 1;
+      padding: 100px 48px;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 72px);
+      letter-spacing: 1px;
+      color: var(--text);
+      margin-bottom: 60px;
+    }
+
+    /* Apps grid */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .app-card {
+      background: var(--bg2);
+      padding: 40px 36px;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 2px;
+      height: 0;
+      background: var(--accent);
+      transition: height 0.3s ease;
+    }
+
+    .app-card:hover { background: var(--bg3); }
+    .app-card:hover::before { height: 100%; }
+
+    .app-platform {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-platform::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--accent2);
+    }
+
+    .app-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .app-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .app-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border: 1px solid;
+      display: inline-block;
+    }
+
+    .status-live {
+      border-color: rgba(42,200,100,0.3);
+      color: #2ac864;
+      background: rgba(42,200,100,0.05);
+    }
+
+    .status-soon {
+      border-color: var(--dim);
+      color: var(--muted);
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-text p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .stat {
+      background: var(--bg2);
+      padding: 32px 28px;
+    }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: 1px;
+    }
+
+    .stat-num span { color: var(--accent2); }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* ── CONTACT ── */
+    .contact-bar {
+      position: relative;
+      z-index: 1;
+      padding: 80px 48px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    .contact-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(32px, 5vw, 56px);
+      color: var(--text);
+      letter-spacing: 1px;
+    }
+
+    .contact-email {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--accent2);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent2);
+      padding-bottom: 2px;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+
+    .contact-email:hover { color: var(--text); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      padding: 28px 48px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 1px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 3px;
+      color: var(--dim);
+    }
+
+    .footer-logo span { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      nav ul { display: none; }
+      .hero, .section { padding-left: 24px; padding-right: 24px; }
+      .divider { margin: 0 24px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .contact-bar { padding: 60px 24px; }
+      footer { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">JFDV <span>Labs</span></a>
+    <ul>
+      <li><a href="#apps">Apps</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">// jfdvlabs.space</div>
+    <h1>DESIGN<br><span class="slash">/</span>BUILD<br>LAUNCH</h1>
+    <p class="hero-sub">Independent software studio based in Campania, Italy. We build simple, powerful apps for Windows and Android.</p>
+    <div class="hero-cta">
+      <a href="#apps" class="btn btn-primary">Our Apps</a>
+      <a href="#contact" class="btn btn-ghost">Get in touch</a>
+    </div>
+    <div class="hero-num">JF</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- APPS -->
+  <section class="section" id="apps">
+    <div class="section-label">// products</div>
+    <h2 class="section-title reveal">What we ship</h2>
+
+    <div class="apps-grid">
+
+      <div class="app-card reveal">
+        <div class="app-platform">Windows · Android</div>
+        <div class="app-name">JeyVision Pro</div>
+        <p class="app-desc">IPTV player with support for Xtream Codes, M3U playlists and custom lists. Free worldwide channels from 100+ countries included.</p>
+        <span class="app-status status-live">Live on Microsoft Store</span>
+      </div>
+
+      <div class="app-card reveal">
+        <div class="app-platform">Android · iOS · Web</div>
+        <div class="app-name">JeySplit</div>
+        <p class="app-desc">Group expense manager. Split bills, track balances and settle up with friends — simply and without friction.</p>
+        <span class="app-status status-soon">Coming soon</span>
+      </div>
+
+      <div class="app-card reveal">
+        <div class="app-platform">TBA</div>
+        <div class="app-name">More coming</div>
+        <p class="app-desc">New products in development under the JFDV Labs brand. Follow updates at jfdvlabs.space.</p>
+        <span class="app-status status-soon">In development</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="section-label">// about</div>
+    <h2 class="section-title reveal">Made in Italy</h2>
+
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>JFDV Labs is an <strong>independent software studio</strong> based in Campania, Italy. We design and build multiplatform applications focused on simplicity, performance and real utility.</p>
+        <p>Our products are distributed on <strong>Microsoft Store</strong>, <strong>Google Play</strong> and directly via our website. We believe in software that works without getting in the way.</p>
+        <p>All apps are developed and maintained by <strong>Juan Franco De Vita</strong> under the registered trademark JeyEffe.</p>
+      </div>
+      <div class="stats-grid reveal">
+        <div class="stat">
+          <div class="stat-num">2<span>+</span></div>
+          <div class="stat-label">Apps shipped</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">7<span>+</span></div>
+          <div class="stat-label">Languages supported</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">100<span>+</span></div>
+          <div class="stat-label">Countries covered</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">IT</div>
+          <div class="stat-label">Based in Campania</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <div class="contact-bar" id="contact">
+    <div class="contact-title reveal">Let's talk.</div>
+    <a href="/cdn-cgi/l/email-protection#056f607c736c766c6a6b75776a456268646c692b666a68" class="contact-email reveal"><span class="__cf_email__" data-cfemail="f8929d818e918b919796888a97b89f95999194d69b9795">[email&#160;protected]</span></a>
+  </div>
+
+  <footer>
+    <div class="footer-logo">JFDV <span>Labs</span></div>
+    <p>© 2026 JFDV Labs · jfdvlabs.space · Campania, Italy</p>
+    <p>JeyEffe® Registered Trademark</p>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isInte
